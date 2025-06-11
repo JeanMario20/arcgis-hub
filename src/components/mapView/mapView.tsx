@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import "@arcgis/map-components";
 import "./mapView.css"
 import Map from "@arcgis/core/Map"
@@ -11,7 +12,7 @@ function ShowMap(){
             basemap: "topo-vector"
         });
 
-        const view = new MapView({
+        new MapView({
             container: "viewDiv",
             map: map,
             zoom: 10,
