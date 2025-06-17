@@ -7,9 +7,12 @@ import WidgetContainer from './components/widgetContainer/widgetContainer'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MapView/>
-    <WidgetContainer>
-      <ButtonDraw/>
-    </WidgetContainer>
+    {/* <MapView value={viewCon}/> */}
+    <MapView>
+      <WidgetContainer>
+        <ButtonDraw/>
+      </WidgetContainer>
+    </MapView>
+    
   </StrictMode>,
 )

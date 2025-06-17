@@ -5,14 +5,18 @@ import Map from "@arcgis/core/Map"
 import MapView from "@arcgis/core/views/MapView"
 import { useEffect } from "react"
 
-function ShowMap(){
+interface Props{
+    children?: React.ReactNode
+}
+
+function ShowMap({ children }: Props){
 
     useEffect(() => {
         const map = new Map({
             basemap: "topo-vector"
         });
 
-        new MapView({
+        const viewCon = new MapView({
             container: "viewDiv",
             map: map,
             zoom: 10,
@@ -27,14 +31,15 @@ function ShowMap(){
     }, []);
 
     return(
-        <div id="viewDiv" style={{width:"247vh"}}></div>
+        <div id="viewDiv" style={{width:"247vh"}}>{children}</div>
     )
 }
 
-export default function mapView(){
+export default function mapView({ children }: Props){
     return(
     <>
     <ShowMap/>
+    {children}
     </>
     )
     
