@@ -1,5 +1,6 @@
 import type {ReactNode, MouseEvent }  from "react";
-import { useState } from 'react';
+//import { useState } from 'react';
+import { useMap } from "../../../context/viewContext";
 
 interface Props{
     onClick: (event: MouseEvent<HTMLButtonElement>) => void;
@@ -16,11 +17,22 @@ function Button({onClick, children}: Props){
 
 
 function ButtonOnOff(){
-    const [draw, setDraw ] = useState(false);
+    const { isDrawing,setIsDrawing } = useMap();
+    const { divElement, startDraw } = useMap()
+    const { clickRef } = useMap();
 
     function onOffDraw(){
-        setDraw(!draw);
-        alert(`este modo es: ${draw}` );
+        setIsDrawing(!isDrawing);
+        if(isDrawing == true){
+            clickRef.current?.on("click", (event) => {
+            console.log("longitud:", event.mapPoint.longitude);
+            console.log("latitud:", event.mapPoint.latitude);
+            })
+        }
+        { divElement() }
+        { startDraw() }
+
+        //tratar de conseguir el viewRef ponerlo aqui mismo y ver si puedo hacer operaciones de onClick
     }
 
     return(
