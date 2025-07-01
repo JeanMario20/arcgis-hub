@@ -13,7 +13,6 @@ interface Props{
 function ShowMap({ children }: Props){
 
     const { viewRefs,clickRef } = useMap();
-    const { startDraw } = useMap();
 
     useEffect(() => {
         const map = new Map({
@@ -36,12 +35,9 @@ function ShowMap({ children }: Props){
         }
     }, [clickRef]);
 
-    const draw = () => {
-            console.log(`el valor actual de view: ${clickRef}`);
-        }
 
     return(
-        <div ref={ viewRefs } onClick={startDraw} id="viewDiv" style={{width:"247vh"}}>{children}</div>
+        <div ref={ viewRefs } /*onClick={}*/ id="viewDiv" style={{width:"247vh"}}>{children}</div>
     )
 }
 

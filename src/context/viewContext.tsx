@@ -10,7 +10,6 @@ interface MapContextValue {
     isDrawing: boolean;
     setIsDrawing: React.Dispatch<React.SetStateAction<boolean>>,
     divElement: () => void;
-    startDraw: () => void;
     clickRef: React.RefObject<MapView | null>
 }
 
@@ -33,16 +32,15 @@ export function MapContext({ children }: Props){
         console.log(viewRefs.current?.offsetWidth);
     }
 
-    const startDraw = () => { //mandar esta funcion al oprimir el mapa
+    /*const startDraw = () => { 
         console.log("aalgo")
-    }
+    }*/
 
     const value = {
         viewRefs,
         isDrawing,
         setIsDrawing,
         divElement,
-        startDraw,
         clickRef
     }
 
