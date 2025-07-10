@@ -5,6 +5,7 @@ import Map from "@arcgis/core/Map"
 import MapView from "@arcgis/core/views/MapView"
 import { useContext, useEffect } from "react"
 import { useMap } from "../../context/viewContext";
+import { useLayer } from "../../context/layersContext";
 
 interface Props{
     children?: React.ReactNode;
@@ -33,6 +34,7 @@ function ShowMap({ children }: Props){
         while (anotherMap.length > 0){
             anotherMap[0].parentNode?.removeChild(anotherMap[0])
         }
+
     }, [clickRef]);
 
 
