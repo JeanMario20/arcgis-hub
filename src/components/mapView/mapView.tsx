@@ -5,7 +5,7 @@ import Map from "@arcgis/core/Map"
 import MapView from "@arcgis/core/views/MapView"
 import { useContext, useEffect } from "react"
 import { useMap } from "../../context/viewContext";
-import { useLayer } from "../../context/layersContext";
+import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 
 interface Props{
     children?: React.ReactNode;
@@ -13,7 +13,7 @@ interface Props{
 
 function ShowMap({ children }: Props){
 
-    const { viewRefs,clickRef } = useMap();
+    const { viewRefs,clickRef, bufferLayer } = useMap();
 
     useEffect(() => {
         const map = new Map({
@@ -26,7 +26,13 @@ function ShowMap({ children }: Props){
             zoom: 10,
             center: [-92.93028, 17.98689],// Coordenadas de ejemplo
         });
-
+        console.log(bufferLayer.current);
+        console.log(clickRef);
+        
+        //map.add(bufferLayer); //arreglar aqui
+        if(bufferLayer.current){
+            map.add(bufferLayer.current);
+        }
         clickRef.current = view;
         
         const anotherMap = document.getElementsByClassName('esri-view-user-storage');
