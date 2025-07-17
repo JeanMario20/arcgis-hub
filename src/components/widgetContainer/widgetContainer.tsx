@@ -13,7 +13,4 @@ export default function widgetContainer({ children }: Props){
     </>
 
     )
-
-
-    //poner el children asi de widgetContainer en el mapView pero pasarlo como prop no como children
 }

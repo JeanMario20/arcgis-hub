@@ -1,10 +1,10 @@
-import {type ReactNode, type MouseEvent, useEffect, useRef, type RefObject }  from "react";
-import { useState } from 'react';
-import { useMap } from "../../../context/viewContext";
+import './bufferWidget.css';
+import {type ReactNode, type MouseEvent, useEffect, useRef, type RefObject, useState }  from "react";
+import { useMap } from '../../context/viewContext';
 import Graphic from "@arcgis/core/Graphic.js"
-//import SimpleMarkerSymbol from "arcgis/core/symbols/SimpleMarkerSymbol"
+import SimpleMarkerSymbol from "arcgis/core/symbols/SimpleMarkerSymbol"
 import type GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
-//import type Graphic from "@arcgis/core/views/Graphic";
+
 
 interface Props{
     onClick: (event: MouseEvent<HTMLButtonElement>) => void;
@@ -22,7 +22,15 @@ function Button({onClick, children}: Props){
     )
 }
 
-function ButtonOnOff(){
+function Div({children}: Props){
+    return(
+        <div id='bufferContainerInfo'>{children}</div>
+    )
+}
+
+
+function BufferWidget(){
+    const [containerVisible, setContainerVisible] = useState(false);
     const [isDrawPolyline, setIsDrawPolyline] = useState<boolean>(false);
     const { clickRef } = useMap();
     const isDrawPolylineRef = useRef(isDrawPolyline);
@@ -51,22 +59,42 @@ function ButtonOnOff(){
         }else{
             return;
         }
-
+    
     }, [isDrawPolyline, clickRef, view])
 
     return(
-        <>
-        <Button onClick={() => setIsDrawPolyline(prev => !prev)}>Polyline</Button>
-        </>
+    <>
+    <Button onClick={() => setContainerVisible(!containerVisible)}>Buffer</Button>
+    {containerVisible ?
+            <>
+            <Div>
+                <div id="buttonContainer">
+                <Button onClick={() => setIsDrawPolyline(prev => !prev)}>Polyline</Button>
+                <button>Borrar todo</button>
+            </div>
+            <div id="bufferOptionsForm">
+                <label id="bufferOptionsLabels" htmlFor="someText1">ejemplo</label>
+                <input id="bufferOptionsInput" type="text" name="nameText1" placeholder="escribe algo"/>
+                
+                <label id="bufferOptionsLabels" htmlFor="someText2">ejemplo</label>
+                <input id="bufferOptionsInput" type="text" name="nameText2" placeholder="escribe algo"/>
+                
+                <label id="bufferOptionsLabels" htmlFor="someText2">ejemplo</label>
+                <input id="bufferOptionsInput" type="text" name="nameText3" placeholder="escribe algo"/>
+
+                <button>Ejecutar Analisis</button>
+            </div>
+            </Div>
+            </>
+            :
+            <div></div>}
+    </>
     )
 }
 
-export default function button(){
-    
+export default function BufferTemplate(){
     return(
-        <>
-        <ButtonOnOff/>
-        </>
+        <BufferWidget/>
     )
 }
 
@@ -154,3 +182,4 @@ function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.V
         bufferLayer.current.graphics.items[1].geometry = polyline;
     }
 }
+
