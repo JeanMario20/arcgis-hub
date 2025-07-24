@@ -4,6 +4,7 @@ import { useMap } from '../../context/viewContext';
 import Graphic from "@arcgis/core/Graphic.js"
 import SimpleMarkerSymbol from "arcgis/core/symbols/SimpleMarkerSymbol"
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
+import Polyline from "@arcgis/core/geometry/Polyline";
 
 
 interface Props{
@@ -36,7 +37,7 @@ function BufferWidget(){
     const isDrawPolylineRef = useRef(isDrawPolyline);
     const { bufferLayer } = useMap()
     const view = clickRef;
-    const coordenadasPoints: number[] = [];
+    const coordenadasPoints: number[][] = [];
     const coordenadasPolyline: number[] = []
     const trazoCounter = {trazo: 0};
 
@@ -72,7 +73,7 @@ function BufferWidget(){
         const graphics = bufferLayer.current?.graphics
         const arrayCoords: number [][] = []
         const polylineObjec = graphics?.find((layer) =>{
-            return layer.attributes.type == "polyline"
+            return layer.geometry?.type == "polyline"
         })
 
         if(polylineObjec)
@@ -167,7 +168,12 @@ export default function BufferTemplate(){
     )
 }
 
-function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.ViewClickEvent, coordenadas: [number, number | null | undefined][], ref:{ trazo:number}, bufferLayer: React.RefObject<GraphicsLayer | null>){
+function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.ViewClickEvent, coordenadas: number[][], ref:{ trazo:number}, bufferLayer: React.RefObject<GraphicsLayer | null>){
+
+    const graphics = bufferLayer.current?.graphics
+    const polylineObject = graphics?.find((layer) => {
+        return layer.geometry?.type == "polyline"
+    })
     
     const point = {
         type: "point", // autocasts as new Point()
@@ -205,20 +211,26 @@ function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.V
     });
 
     //view.current?.graphics.add(pointGraphic); <-- dibujar en el mapa
-    bufferLayer.current?.graphics.add(pointGraphic);
+    graphics?.add(pointGraphic);
     const countGraphics = bufferLayer.current?.graphics.length;
     
 
-    if(countGraphics != undefined && countGraphics == 1 && ref.trazo == 1){
+    if(countGraphics != undefined && countGraphics == 1 && polylineObject == undefined){
 
-        const polyline = {
+        /*const polyline = {
             type: "polyline",
             paths: [
                 //[coordenadas[0][0], coordenadas[0][1]],
                 [-94.56682631003801, 18.022285257769557],
                 [-94.2489634193771, 18.07070008924522],
             ]
-        };
+        };*/
+
+        const polyline = new Polyline({
+            type: "polyline",
+            paths: [event.mapPoint.longitude, event.mapPoint.latitude]
+        })
+
 
         const lineSymbol = {
             type: "simple-line",
@@ -230,7 +242,7 @@ function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.V
             Name: "temp",
             owner: "temp",
             length: "temp",
-            type: "polyline",
+            trazo: 0
         };
 
         const polylineGraphics = new Graphic({
@@ -239,15 +251,32 @@ function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.V
             attributes: lineAtt,
         });
         
-        bufferLayer.current?.graphics.add(polylineGraphics);
+        graphics?.add(polylineGraphics);
     }
 
-    if(countGraphics != undefined && countGraphics > 1 && bufferLayer.current?.graphics.items[1].geometry.paths){
-        const polyline = {
-            type: "polyline",
+    if(countGraphics != undefined && countGraphics > 1 && bufferLayer.current?.graphics.items[1].geometry){
+        /*const polyline = new Polyline({
+            //type: "polyline",
             paths: [coordenadas]
+        })*/
+
+        if(polylineObject && polylineObject.geometry instanceof Polyline){
+            coordenadas = polylineObject.geometry?.paths[0]
+            coordenadas.push([event.mapPoint.longitude,event.mapPoint.latitude])
+            const polyline = new Polyline({
+                type: "polyline",
+                paths: [coordenadas]
+            })
+            polylineObject.geometry = polyline;
         }
-        bufferLayer.current.graphics.items[1].geometry = polyline;
+
+        /*if(polylineObject && polylineObject.geometry instanceof Polyline){
+            //polylineObject.geometry?.paths[0].push([event.mapPoint.longitude,event.mapPoint.latitude])
+            //polylineObject.geometry.addPath([[event.mapPoint.longitude,event.mapPoint.latitude]])
+            polylineObject.attributes.trazo = polylineObject.attributes.trazo + 1;
+            //polylineObject.geometry = polyline;
+            
+        }*/
     }
 }
 
