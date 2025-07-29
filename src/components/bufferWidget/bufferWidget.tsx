@@ -5,6 +5,7 @@ import Graphic from "@arcgis/core/Graphic.js"
 import SimpleMarkerSymbol from "arcgis/core/symbols/SimpleMarkerSymbol"
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import Polyline from "@arcgis/core/geometry/Polyline";
+import { createBuffer } from './createBuffer';
 
 
 interface Props{
@@ -21,6 +22,18 @@ function Button({onClick, children}: Props){
             {children}
         </button>
     )
+}
+
+function ButtonAnalisis({param, children}){
+    return(
+        <button onClick={() => EjecutarAnalisis(param)}>
+            {children}
+        </button>
+    )
+}
+
+function EjecutarAnalisis(layer){
+    console.log(layer.current.graphics);
 }
 
 function Div({children}: Props){
@@ -100,12 +113,6 @@ function BufferWidget(){
             ]
         };
 
-        /*const lineGeometry = new polyline({
-            hasZ: false,
-            hasM: true,
-            paths: polyline,
-            spatialReference: { wkid: 4326 }
-        });*/
 
         const lineSymbol = {
             type: "simple-line",
@@ -152,7 +159,7 @@ function BufferWidget(){
                 <label id="bufferOptionsLabels" htmlFor="someText2">ejemplo</label>
                 <input id="bufferOptionsInput" type="text" name="nameText3" placeholder="escribe algo"/>
 
-                <button>Ejecutar Analisis</button>
+                <ButtonAnalisis param={bufferLayer}>Ejecutar Analisis</ButtonAnalisis>
             </div>
             </Div>
             </>
@@ -217,15 +224,6 @@ function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.V
 
     if(countGraphics != undefined && countGraphics == 1 && polylineObject == undefined){
 
-        /*const polyline = {
-            type: "polyline",
-            paths: [
-                //[coordenadas[0][0], coordenadas[0][1]],
-                [-94.56682631003801, 18.022285257769557],
-                [-94.2489634193771, 18.07070008924522],
-            ]
-        };*/
-
         const polyline = new Polyline({
             type: "polyline",
             paths: [event.mapPoint.longitude, event.mapPoint.latitude]
@@ -255,10 +253,6 @@ function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.V
     }
 
     if(countGraphics != undefined && countGraphics > 1 && bufferLayer.current?.graphics.items[1].geometry){
-        /*const polyline = new Polyline({
-            //type: "polyline",
-            paths: [coordenadas]
-        })*/
 
         if(polylineObject && polylineObject.geometry instanceof Polyline){
             coordenadas = polylineObject.geometry?.paths[0]
@@ -270,13 +264,6 @@ function DibujarPolyline(view: RefObject<__esri.MapView | null>, event: __esri.V
             polylineObject.geometry = polyline;
         }
 
-        /*if(polylineObject && polylineObject.geometry instanceof Polyline){
-            //polylineObject.geometry?.paths[0].push([event.mapPoint.longitude,event.mapPoint.latitude])
-            //polylineObject.geometry.addPath([[event.mapPoint.longitude,event.mapPoint.latitude]])
-            polylineObject.attributes.trazo = polylineObject.attributes.trazo + 1;
-            //polylineObject.geometry = polyline;
-            
-        }*/
     }
 }
 
